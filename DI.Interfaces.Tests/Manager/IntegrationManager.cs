@@ -1,6 +1,5 @@
 ﻿using DI.Interfaces.Tests.Integrations.Interfaces;
 using DI.Interfaces.Tests.Integrations.Managers;
-using DI.Interfaces.Tests.Integrations.Models;
 using DI.Interfaces.Tests.Models;
 using DI.Interfaces.Tests.ViewModels;
 

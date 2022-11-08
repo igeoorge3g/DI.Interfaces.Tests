@@ -1,5 +1,4 @@
-﻿using DI.Interfaces.Tests.Integrations.Models;
-using DI.Interfaces.Tests.Manager;
+﻿using DI.Interfaces.Tests.Manager;
 using DI.Interfaces.Tests.Models;
 using Microsoft.AspNetCore.Mvc;
 

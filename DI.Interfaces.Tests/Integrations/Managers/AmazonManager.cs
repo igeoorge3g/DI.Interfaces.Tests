@@ -12,8 +12,7 @@ namespace DI.Interfaces.Tests.Integrations.Managers
     /// </summary>
     public class AmazonManager : IIntegrationManager<AmazonAuth, AmazonProduct>
     {
-        
-        public AmazonProduct CreatePublication(AmazonAuth auth, Publication product) 
+        public AmazonProduct CreatePublication(AmazonAuth auth, Publication product)
         {
             AmazonProduct response = Amazon_RequestThatReturnConcretePublication(auth, product);
             return response;
@@ -42,7 +41,7 @@ namespace DI.Interfaces.Tests.Integrations.Managers
             throw new NotImplementedException();
         }
 
-        
+
         private AmazonProduct Amazon_RequestThatReturnConcretePublication(AmazonAuth auth, Publication publication)
         {
             return new AmazonProduct();
