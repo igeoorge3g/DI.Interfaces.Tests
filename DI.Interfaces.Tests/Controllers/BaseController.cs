@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DI.Interfaces.Tests.Controllers
 {
-
+    [ApiController]
+    [Route("api/[controller]")]
     public abstract class BaseController<TId, TEntity, TEntityRequest> : ControllerBase
     {
         protected IBaseManager<TId, TEntity, TEntityRequest> _manager;

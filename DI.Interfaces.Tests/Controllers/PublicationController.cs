@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DI.Interfaces.Tests.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
     public class PublicationController : BaseController<int, Publication, PublicationRequest>
     {
         private new readonly PublicationManager _manager;
