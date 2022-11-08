@@ -1,8 +1,8 @@
-﻿using DI.Interfaces.Tests.Manager;
-using DI.Interfaces.Tests.Models;
+﻿using DI.Interfaces.Core.Manager;
+using DI.Interfaces.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DI.Interfaces.Tests.Controllers
+namespace DI.Interfaces.Core.Controllers
 {
     public class HomeController : Controller
     {

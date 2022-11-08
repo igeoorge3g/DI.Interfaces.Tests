@@ -1,7 +1,9 @@
-using DI.Interfaces.Tests.Integrations.Managers;
-using DI.Interfaces.Tests.Interfaces;
-using DI.Interfaces.Tests.Manager;
-using DI.Interfaces.Tests.Repositories;
+using DI.Interfaces.Core.Integrations.Managers;
+using DI.Interfaces.Core.Interfaces;
+using DI.Interfaces.Core.Manager;
+using DI.Interfaces.Core.Repositories;
+using DI.Interfaces.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 //builder.Services.AddScoped(typeof(IBaseManager<,,>), typeof(BaseManager<,,>)); // <<< For abstract implementations
 builder.Services.AddScoped<ISalesChannelRepository, SalesChannelRepository>();
 builder.Services.AddScoped<IPublicationRepository, PublicationRepository>();

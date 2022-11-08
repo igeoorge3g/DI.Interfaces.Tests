@@ -6,7 +6,7 @@ using DI.Interfaces.Tests.ViewModels;
 
 namespace DI.Interfaces.Tests.Manager
 {
-    public class PublicationManager : BaseManager<int, Publication, PublicationRequest>, IPublicationManager
+    public class PublicationManager : BaseManager<int, Publication, PublicationRequest, PublicationResponse>, IPublicationManager
     {
         new protected PublicationRepository _repository;
 
@@ -20,12 +20,12 @@ namespace DI.Interfaces.Tests.Manager
             return base.Find(id);
         }
 
-        public async Task<Publication> FindByIdentifier(string identifier)
+        public async Task<Publication> FindByIdentifier(int salesChannelId, string identifier)
         {
             return await _repository.FindByIdentifier(identifier);
         }
 
-        protected override Task<Publication> ToEntity(PublicationRequest request)
+        public override Task<Publication> ToEntity(PublicationRequest request)
         {
             return Task.Run(() =>
             {
@@ -33,11 +33,19 @@ namespace DI.Interfaces.Tests.Manager
             });
         }
 
-        protected override Task<PublicationRequest> ToRequest(Publication entity)
+        public override Task<PublicationRequest> ToRequest(Publication entity)
         {
             return Task.Run(() =>
             {
                 return new PublicationRequest { Name = entity.Name };
+            });
+        }
+
+        public override Task<PublicationResponse> ToResponse(Publication entity)
+        {
+            return Task.Run(() =>
+            {
+                return new PublicationResponse { };
             });
         }
     }

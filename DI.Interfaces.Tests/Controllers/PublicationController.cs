@@ -1,62 +1,35 @@
-﻿using DI.Interfaces.Tests.Interfaces;
-using DI.Interfaces.Tests.Manager;
-using DI.Interfaces.Tests.Models;
-using DI.Interfaces.Tests.ViewModels;
+﻿#nullable disable
+using DI.Interfaces.Core.Interfaces;
+using DI.Interfaces.Core.Manager;
+using DI.Interfaces.Core.Models;
+using DI.Interfaces.Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DI.Interfaces.Tests.Controllers
+namespace DI.Interfaces.Core.Controllers
 {
-    public class PublicationController : BaseController<int, Publication, PublicationRequest>
+    public class PublicationController : BaseController<int, Publication, PublicationFilter, PublicationRequest, PublicationResponse>
     {
-        private new readonly PublicationManager _manager;
         private readonly IntegrationManager _integrationManager;
-        private readonly ISalesChannelManager _salesChannelManager;
 
         public PublicationController(
-            IntegrationManager integrationManager,
             IPublicationManager publicationManager,
-            ISalesChannelManager salesChannelManager) : base(publicationManager)
+            IntegrationManager integrationManager) : base(publicationManager)
         {
             _integrationManager = integrationManager;
-            _salesChannelManager = salesChannelManager;
         }
 
 
-
         [HttpGet, Route("{publicationId}/Sync")]
-        public async Task<Publication> Sync(int publicationId)
+        public async Task<PublicationResponse> Sync(int publicationId)
         {
-            var publication = await _manager.Find(publicationId);
-            var salesChannel = await _salesChannelManager.Find(publication.SalesChannelId);
-
-            var publicationResponse = await _integrationManager.Publication_GetByIdentifier(salesChannel, publication.Identifier);
-            var publicationRequest = await _integrationManager.ToPublicationRequest(salesChannel, publicationResponse!);
-
-            await _manager.Update(publication, publicationRequest);
-
-            return publication;
+            return await _integrationManager.Sync(publicationId);
         }
 
         [HttpGet, Route("Sync/{salesChannelId}/{identifier}")]
 
-        public async Task<Publication> Sync(int salesChannelId, string identifier)
+        public async Task<PublicationResponse> Sync(int salesChannelId, string identifier)
         {
-            var salesChannel = await _salesChannelManager.Find(salesChannelId);
-            var publicationResponse = await _integrationManager.Publication_GetByIdentifier(salesChannel, identifier);
-
-            PublicationRequest publicationRequest = await _integrationManager.ToPublicationRequest(salesChannel, publicationResponse!);
-
-            var publication = await _manager.FindByIdentifier(identifier);
-            if (publication is null)
-            {
-                publication = await _manager.Insert(publicationRequest);
-            }
-            else
-            {
-                await _manager.Update(publication, publicationRequest);
-            }
-
-            return publication;
+            return await _integrationManager.Sync(salesChannelId, identifier);
         }
 
 

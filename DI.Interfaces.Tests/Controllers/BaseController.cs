@@ -1,49 +1,37 @@
-﻿using DI.Interfaces.Tests.Interfaces;
+﻿using DI.Interfaces.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DI.Interfaces.Tests.Controllers
+namespace DI.Interfaces.Core.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public abstract class BaseController<TId, TEntity, TEntityRequest> : ControllerBase
+    public abstract class BaseController<TId, TEntity, TEntityFilter, TEntityRequest, TEntityResponse> : ControllerBase
     {
-        protected IBaseManager<TId, TEntity, TEntityRequest> _manager;
+        protected IBaseManager<TId, TEntity, TEntityRequest, TEntityResponse> _manager;
 
-        public BaseController(IBaseManager<TId, TEntity, TEntityRequest> manager)
+        public BaseController(IBaseManager<TId, TEntity, TEntityRequest, TEntityResponse> manager)
         {
             _manager = manager;
         }
 
         [HttpGet, Route("{id}")]
-        public virtual async Task<TEntity> Get(TId id)
+        public virtual async Task<TEntityResponse> Get(TId id)
         {
-            return await _manager.Find(id);
+            var entity = await _manager.Find(id);
+            return await _manager.ToResponse(entity);
         }
 
         [HttpPost]
-        public virtual async Task<TEntity> Post(TEntityRequest request)
+        public virtual async Task<TEntityResponse> Post(TEntityRequest request)
         {
-            return await _manager.Insert(request);
+            return await _manager.Insert(request, true);
         }
 
         [HttpPut, Route("{id}")]
-        public virtual async Task<TEntity> Put(TId id, [FromBody] TEntityRequest request)
+        public virtual async Task<TEntityResponse> Put(TId id, [FromBody] TEntityRequest request)
         {
             var entity = await _manager.Find(id);
-            if (entity is null)
-            {
-                entity = await _manager.Insert(request);
-            }
-            else
-            {
-                await _manager.Update(entity, request);
-            }
-
-            return entity;
+            return await _manager.Update(entity, request, true);
         }
-
-
-
-
     }
 }

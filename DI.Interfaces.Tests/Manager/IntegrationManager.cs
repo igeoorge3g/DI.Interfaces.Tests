@@ -1,5 +1,7 @@
-﻿using DI.Interfaces.Tests.Integrations.Interfaces;
+﻿#nullable disable
+using DI.Interfaces.Tests.Integrations.Interfaces;
 using DI.Interfaces.Tests.Integrations.Managers;
+using DI.Interfaces.Tests.Interfaces;
 using DI.Interfaces.Tests.Models;
 using DI.Interfaces.Tests.ViewModels;
 
@@ -15,6 +17,8 @@ namespace DI.Interfaces.Tests.Manager
         private readonly AmazonManager _amazon;
         private readonly ShopifyManager _shopify;
         private readonly MercadolibreManager _mercadolibre;
+        private readonly IPublicationManager _publicationManager;
+        private readonly ISalesChannelManager _salesChannelManager;
 
         /// <summary>
         /// 
@@ -22,11 +26,18 @@ namespace DI.Interfaces.Tests.Manager
         /// <param name="amazon">Amazon <Scoped> service will be injected</param>
         /// <param name="shopify">Shopify <Scoped> service will be injected</param>
         /// <param name="mercadolibre">Mercadolibre <Scoped> service will be injected</param>
-        public IntegrationManager(AmazonManager amazon, ShopifyManager shopify, MercadolibreManager mercadolibre)
+        public IntegrationManager(
+            AmazonManager amazon,
+            ShopifyManager shopify,
+            MercadolibreManager mercadolibre,
+            IPublicationManager publicationManager,
+            ISalesChannelManager salesChannelManager)
         {
             _amazon = amazon;
             _shopify = shopify;
             _mercadolibre = mercadolibre;
+            _publicationManager = publicationManager;
+            _salesChannelManager = salesChannelManager;
         }
 
         /// <summary>
@@ -78,6 +89,40 @@ namespace DI.Interfaces.Tests.Manager
         internal Task<PublicationRequest> ToPublicationRequest(SalesChannel salesChannel, IPublication publication)
         {
             return GetConcrete(salesChannel).ToPublicationRequest(publication);
+        }
+
+        internal async Task<Publication> Sync(int publicationId)
+        {
+            var publication = await _publicationManager.Find(publicationId);
+            var salesChannel = await _salesChannelManager.Find(publication.SalesChannelId);
+
+            var publicationResponse = await Publication_GetByIdentifier(salesChannel, publication.Identifier);
+            var publicationRequest = await ToPublicationRequest(salesChannel, publicationResponse!);
+
+            await _publicationManager.Update(publication, publicationRequest);
+
+            return publication;
+        }
+
+
+        internal async Task<Publication> Sync(int salesChannelId, string identifier)
+        {
+            var salesChannel = await _salesChannelManager.Find(salesChannelId);
+            var publicationResponse = await Publication_GetByIdentifier(salesChannel, identifier);
+
+            PublicationRequest publicationRequest = await ToPublicationRequest(salesChannel, publicationResponse!);
+
+            Publication publication = await _publicationManager.FindByIdentifier(salesChannelId, identifier);
+            if (publication is null)
+            {
+                publication = await _publicationManager.Insert(publicationRequest);
+            }
+            else
+            {
+                await _publicationManager.Update(publication, publicationRequest);
+            }
+
+            return publication;
         }
     }
 }

@@ -1,10 +1,10 @@
-﻿using DI.Interfaces.Tests.Interfaces;
-using DI.Interfaces.Tests.Models;
-using DI.Interfaces.Tests.ViewModels;
+﻿using DI.Interfaces.Core.Interfaces;
+using DI.Interfaces.Core.Models;
+using DI.Interfaces.Core.ViewModels;
 
-namespace DI.Interfaces.Tests.Controllers
+namespace DI.Interfaces.Core.Controllers
 {
-    public class SalesChannelController : BaseController<int, SalesChannel, SalesChannelRequest>
+    public class SalesChannelController : BaseController<int, SalesChannel, SalesChannelFilter, SalesChannelRequest, SalesChannelResponse>
     {
         public SalesChannelController(ISalesChannelManager manager) : base(manager)
         {

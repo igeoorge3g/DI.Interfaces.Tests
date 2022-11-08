@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DI.Interfaces.Core2\DI.Interfaces.Core.csproj" />
+    <ProjectReference Include="..\DI.Interfaces.Infrastructure\DI.Interfaces.Infrastructure.csproj" />
+    <ProjectReference Include="..\DI.Interfaces.Integrations\DI.Interfaces.Integrations.csproj" />
+    <ProjectReference Include="..\DI.Interfaces.Shared\DI.Interfaces.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

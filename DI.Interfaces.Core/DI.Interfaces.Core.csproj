@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>disable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Interfaces\**" />
+	  <Compile Remove="Models\**" />
+	  <Compile Remove="ViewModels\**" />
+	  <EmbeddedResource Remove="Interfaces\**" />
+	  <EmbeddedResource Remove="Models\**" />
+	  <EmbeddedResource Remove="ViewModels\**" />
+	  <None Remove="Interfaces\**" />
+	  <None Remove="Models\**" />
+	  <None Remove="ViewModels\**" />
+	</ItemGroup>
+
+</Project>
