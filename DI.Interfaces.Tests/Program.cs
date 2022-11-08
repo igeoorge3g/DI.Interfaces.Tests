@@ -7,9 +7,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<ISalesChannelRepository, SalesChannelRepository>();
 builder.Services.AddScoped<IPublicationRepository, PublicationRepository>();
+
+builder.Services.AddScoped<IntegrationManager>();
+builder.Services.AddScoped<PublicationManager>();
+builder.Services.AddScoped<SalesChannelManager>();
 
 builder.Services.AddScoped<AmazonManager>();
 builder.Services.AddScoped<MercadolibreManager>();
@@ -30,6 +35,14 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseSwagger();
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+    options.RoutePrefix = string.Empty;
+});
+
 
 app.UseAuthorization();
 

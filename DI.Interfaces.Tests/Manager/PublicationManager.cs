@@ -1,4 +1,5 @@
-﻿using DI.Interfaces.Tests.Models;
+﻿using DI.Interfaces.Tests.Interfaces;
+using DI.Interfaces.Tests.Models;
 using DI.Interfaces.Tests.Repositories;
 using DI.Interfaces.Tests.ViewModels;
 
@@ -8,7 +9,7 @@ namespace DI.Interfaces.Tests.Manager
     {
         new protected PublicationRepository _repository;
 
-        public PublicationManager(PublicationRepository repository) : base(repository)
+        public PublicationManager(IPublicationRepository repository) : base(repository)
         {
 
         }

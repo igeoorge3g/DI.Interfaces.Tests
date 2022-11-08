@@ -1,10 +1,13 @@
 ﻿using DI.Interfaces.Tests.Manager;
+using DI.Interfaces.Tests.Models;
 using DI.Interfaces.Tests.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DI.Interfaces.Tests.Controllers
 {
-    public class PublicationController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class PublicationController : ControllerBase
     {
         private readonly IntegrationManager _integrationManager;
         private readonly PublicationManager _publicationManager;
@@ -21,39 +24,54 @@ namespace DI.Interfaces.Tests.Controllers
         }
 
         [HttpGet]
-        public async Task<JsonResult> Get(int id)
+        public async Task<Publication> Get(int id)
         {
             var publication = await _publicationManager.Find(id);
-            return Json(publication);
+            return publication;
         }
 
         [HttpPost]
-        public async Task<JsonResult> Post(PublicationRequest request)
+        public async Task<Publication> Post(PublicationRequest request)
         {
             var publication = await _publicationManager.Insert(request);
-            return Json(publication);
+            return publication;
         }
 
-        [HttpPut]
-        public async Task<JsonResult> Put(int id, PublicationRequest request)
+        [HttpPut, Route("{id}")]
+        public async Task<Publication> Put(int id, [FromBody] PublicationRequest request)
         {
             var publication = await _publicationManager.Find(id);
 
             await _publicationManager.Update(publication, request);
 
-            return Json(publication);
+            return publication;
         }
 
-        [HttpGet]
-        public async Task<JsonResult> Sync_Single(int salesChannelId, string identifier)
+        [HttpGet, Route("{publicationId}/Sync")]
+        public async Task<Publication> Sync(int publicationId)
+        {
+            var publication = await _publicationManager.Find(publicationId);
+            var salesChannel = await _salesChannelManager.Find(publication.SalesChannelId);
+
+            var publicationResponse = await _integrationManager.Publication_GetByIdentifier(salesChannel, publication.Identifier);
+            var publicationRequest = await _integrationManager.ToPublicationRequest(salesChannel, publicationResponse!);
+
+            await _publicationManager.Update(publication, publicationRequest);
+
+            return publication;
+        }
+
+        [HttpGet, Route("Sync/{salesChannelId}/{identifier}")]
+
+        public async Task<Publication> Sync(int salesChannelId, string identifier)
         {
             var salesChannel = await _salesChannelManager.Find(salesChannelId);
             var publicationResponse = await _integrationManager.Publication_GetByIdentifier(salesChannel, identifier);
 
-            if (publicationResponse is null)
-            {
-                return Json(new { Success = false, Message = $"{identifier} Not Found" });
-            }
+            //if (publicationResponse is null)
+            //{
+            //    return NotFound(new { Success = false, Message = $"{identifier} Not Found" });
+            //}
 
             PublicationRequest publicationRequest = await _integrationManager.ToPublicationRequest(salesChannel, publicationResponse!);
 
@@ -67,21 +85,9 @@ namespace DI.Interfaces.Tests.Controllers
                 await _publicationManager.Update(publication, publicationRequest);
             }
 
-            return Json(publication);
+            return publication;
         }
 
-        [HttpGet]
-        public async Task<JsonResult> Sync_Single(int publicationId)
-        {
-            var publication = await _publicationManager.Find(publicationId);
-            var salesChannel = await _salesChannelManager.Find(publication.SalesChannelId);
-
-            var publicationResponse = await _integrationManager.Publication_GetByIdentifier(salesChannel, publication.Identifier);
-            var publicationRequest = await _integrationManager.ToPublicationRequest(salesChannel, publicationResponse!);
-
-            await _publicationManager.Update(publication, publicationRequest);
-
-            return Json(publication);
-        }
+        
     }
 }
