@@ -1,11 +1,12 @@
-﻿using DI.Interfaces.Tests.Interfaces;
+﻿#nullable disable
+using DI.Interfaces.Tests.Interfaces;
 using DI.Interfaces.Tests.Models;
 using DI.Interfaces.Tests.Repositories;
 using DI.Interfaces.Tests.ViewModels;
 
 namespace DI.Interfaces.Tests.Manager
 {
-    public class PublicationManager : BaseManager<int, Publication, PublicationRequest>
+    public class PublicationManager : BaseManager<int, Publication, PublicationRequest>, IPublicationManager
     {
         new protected PublicationRepository _repository;
 

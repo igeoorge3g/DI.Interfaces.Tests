@@ -9,12 +9,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddSwaggerGen();
 
+//builder.Services.AddScoped(typeof(IBaseManager<,,>), typeof(BaseManager<,,>)); // <<< For abstract implementations
 builder.Services.AddScoped<ISalesChannelRepository, SalesChannelRepository>();
 builder.Services.AddScoped<IPublicationRepository, PublicationRepository>();
 
 builder.Services.AddScoped<IntegrationManager>();
-builder.Services.AddScoped<PublicationManager>();
-builder.Services.AddScoped<SalesChannelManager>();
+builder.Services.AddScoped<IPublicationManager, PublicationManager>();
+builder.Services.AddScoped<ISalesChannelManager, SalesChannelManager>();
 
 builder.Services.AddScoped<AmazonManager>();
 builder.Services.AddScoped<MercadolibreManager>();

@@ -20,12 +20,18 @@ namespace DI.Interfaces.Tests.Repositories
 
         public async Task<Publication> InsertAsync(Publication entity)
         {
-            return await GetAsync(entity.Id);
+            return await Task.Run(() =>
+            {
+                return entity;
+            });
         }
 
         public async Task Update(Publication entity)
         {
-            await Task.Run(() => { });
+            await Task.Run(() =>
+            {
+
+            });
         }
     }
 }
