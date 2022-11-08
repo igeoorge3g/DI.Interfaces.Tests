@@ -2,9 +2,6 @@
 
 namespace DI.Interfaces.Core.Models
 {
-    /// <summary>
-    /// My custom Product
-    /// </summary>
     public class Publication : IEntity
     {
         public int Id { get; init; }

@@ -5,6 +5,7 @@ using DI.Interfaces.Core.Integrations.Managers;
 using DI.Interfaces.Core.Interfaces;
 using DI.Interfaces.Core.Models;
 using DI.Interfaces.Core.ViewModels;
+using DI.Interfaces.Integrations.Interfaces;
 
 namespace DI.Interfaces.Core.Manager
 {
@@ -15,9 +16,9 @@ namespace DI.Interfaces.Core.Manager
     /// </summary>
     public class IntegrationManager
     {
-        private readonly AmazonManager _amazon;
-        private readonly ShopifyManager _shopify;
-        private readonly MercadolibreManager _mercadolibre;
+        private readonly IAmazonManager _amazon;
+        private readonly IShopifyManager _shopify;
+        private readonly IMercadolibreManager _mercadolibre;
         private readonly IPublicationManager _publicationManager;
         private readonly ISalesChannelManager _salesChannelManager;
 
@@ -28,9 +29,9 @@ namespace DI.Interfaces.Core.Manager
         /// <param name="shopify">Shopify <Scoped> service will be injected</param>
         /// <param name="mercadolibre">Mercadolibre <Scoped> service will be injected</param>
         public IntegrationManager(
-            AmazonManager amazon,
-            ShopifyManager shopify,
-            MercadolibreManager mercadolibre,
+            IAmazonManager amazon,
+            IShopifyManager shopify,
+            IMercadolibreManager mercadolibre,
             IPublicationManager publicationManager,
             ISalesChannelManager salesChannelManager)
         {
@@ -66,7 +67,7 @@ namespace DI.Interfaces.Core.Manager
         {
             var interfaceHiddenConcreteManager = GetConcrete(salesChannel);
             var interfaceHiddenConcreteAuth = interfaceHiddenConcreteManager.GetAuth(salesChannel);
-            var interfaceHiddenConcreteProduct = interfaceHiddenConcreteManager.CreatePublication(interfaceHiddenConcreteAuth, publication);
+            var interfaceHiddenConcreteProduct = interfaceHiddenConcreteManager.Publication_Create(interfaceHiddenConcreteAuth, publication);
             return interfaceHiddenConcreteProduct;
         }
 
@@ -74,7 +75,7 @@ namespace DI.Interfaces.Core.Manager
         {
             var interfaceHiddenConcreteManager = GetConcrete(salesChannel);
             var interfaceHiddenConcreteAuth = interfaceHiddenConcreteManager.GetAuth(salesChannel);
-            var interfaceHiddenConcreteProduct = interfaceHiddenConcreteManager.CreatePublication(interfaceHiddenConcreteAuth, publication);
+            var interfaceHiddenConcreteProduct = interfaceHiddenConcreteManager.Publication_Create(interfaceHiddenConcreteAuth, publication);
             return interfaceHiddenConcreteProduct;
         }
 
@@ -83,7 +84,7 @@ namespace DI.Interfaces.Core.Manager
             var auth = GetConcrete(salesChannel).GetAuth(salesChannel);
             return Task.Run(() =>
             {
-                return GetConcrete(salesChannel).GetPublication(auth, identifier);
+                return GetConcrete(salesChannel).Publication_Get(auth, identifier);
             });
         }
 
@@ -110,13 +111,38 @@ namespace DI.Interfaces.Core.Manager
 
             PublicationRequest publicationRequest = await ToPublicationRequest(salesChannel, publicationResponse!);
 
-            Publication publication = await _publicationManager.FindByIdentifier(salesChannelId, identifier);
+            Publication publication = await _publicationManager.FindByIdentifierAsync(salesChannelId, identifier);
             if (publication is null)
             {
                 return await _publicationManager.Insert(publicationRequest);
             }
 
             return await _publicationManager.Update(publication, publicationRequest);
+        }
+
+        public async Task<IEnumerable<PublicationResponse>> Sync_All(int salesChannelId)
+        {
+            var salesChannel = await _salesChannelManager.Find(salesChannelId);
+            var concrete = GetConcrete(salesChannel);
+            var auth = concrete.GetAuth(salesChannel);
+            var publications = await GetConcrete(salesChannel).Publication_Get_All(auth);
+            var responses = new List<PublicationResponse>();
+            foreach (var iPublication in publications)
+            {
+                var request = await ToPublicationRequest(salesChannel, iPublication);
+                var publication = await _publicationManager.FindByIdentifierAsync(salesChannelId, iPublication.Identifier);
+                if (publication is null)
+                {
+                    var response = await _publicationManager.Insert(request, false);
+                    responses.Add(response);
+                }
+                else
+                {
+                    var response = await _publicationManager.Update(publication, request, false);
+                    responses.Add(response);
+                }
+            }
+            return responses;
         }
     }
 }

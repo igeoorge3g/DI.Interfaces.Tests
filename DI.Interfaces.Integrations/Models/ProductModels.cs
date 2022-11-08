@@ -15,6 +15,7 @@ namespace DI.Interfaces.Core.Integrations.Models
         /// This property belongs only to Amazon
         /// </summary>
         public string CustomAmazonProperty { get; set; }
+        public string Identifier { get; set; }
     }
 
     public class ShopifyProduct : IPublication
@@ -25,6 +26,7 @@ namespace DI.Interfaces.Core.Integrations.Models
         /// This property belongs only to Shopify
         /// </summary>
         public string CustomShopifyProperty { get; set; }
+        public string Identifier { get; set; }
     }
 
     public class MercadolibreProduct : IPublication
@@ -33,5 +35,6 @@ namespace DI.Interfaces.Core.Integrations.Models
         public string Name { get; set; }
 
         public string MercadolibreCustomProperty { get; set; }
+        public string Identifier { get; set; }
     }
 }

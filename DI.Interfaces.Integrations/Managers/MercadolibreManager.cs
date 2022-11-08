@@ -2,27 +2,21 @@
 using DI.Interfaces.Core.Integrations.Models;
 using DI.Interfaces.Core.Models;
 using DI.Interfaces.Core.ViewModels;
+using DI.Interfaces.Integrations.Interfaces;
 
 namespace DI.Interfaces.Core.Integrations.Managers
 {
-    public class MercadolibreManager : IIntegrationManager<MercadolibreAuth, MercadolibreProduct>
+    public class MercadolibreManager : IMercadolibreManager
     {
-        public MercadolibreProduct CreatePublication(MercadolibreAuth auth, Publication publication)
+        private readonly IMercadolibreApiClient _apiClient;
+        public MercadolibreManager(IMercadolibreApiClient apiClient)
         {
-            MercadolibreProduct response = Mercadolibre_RequestThatReturnConcretePublication(auth, publication);
-            return response;
+            _apiClient = apiClient;
         }
 
-        private MercadolibreProduct Mercadolibre_RequestThatReturnConcretePublication(MercadolibreAuth auth, Publication publication)
+        public MercadolibreProduct Publication_Create(MercadolibreAuth auth, Publication publication)
         {
-            return new MercadolibreProduct { Id = 0, Name = "Producto de Mercadolibre", MercadolibreCustomProperty = "prop custom ML" };
-        }
-
-        public MercadolibreProduct CreatePublicationAndDoSomethingElseForAllSalesChannels(MercadolibreAuth auth, Publication publication)
-        {
-            var mercadolibrePublication = CreatePublication(auth, publication);
-            mercadolibrePublication.MercadolibreCustomProperty = "chau";
-            return mercadolibrePublication;
+            throw new NotImplementedException();
         }
 
         public MercadolibreAuth GetAuth(SalesChannel salesChanel)
@@ -30,11 +24,15 @@ namespace DI.Interfaces.Core.Integrations.Managers
             return new MercadolibreAuth { ConnectionString = Guid.Empty };
         }
 
-        public Task<MercadolibreProduct> GetPublication(MercadolibreAuth auth, string identifier)
+        public Task<MercadolibreProduct> Publication_Get(MercadolibreAuth auth, string identifier)
         {
             throw new NotImplementedException();
         }
 
+        public Task<IEnumerable<IPublication>> Publication_Get_All(MercadolibreAuth auth)
+        {
+            throw new NotImplementedException();
+        }
         public Task<PublicationRequest> ToPublicationRequest(MercadolibreProduct publication)
         {
             throw new NotImplementedException();

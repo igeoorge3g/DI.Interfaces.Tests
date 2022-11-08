@@ -20,7 +20,7 @@ namespace DI.Interfaces.Core.Manager
             return base.Find(id);
         }
 
-        public async Task<Publication> FindByIdentifier(int salesChannelId, string identifier)
+        public async Task<Publication> FindByIdentifierAsync(int salesChannelId, string identifier)
         {
             return await _repository.FindByIdentifier(identifier);
         }

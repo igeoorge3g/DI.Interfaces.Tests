@@ -2,43 +2,28 @@
 using DI.Interfaces.Core.Integrations.Models;
 using DI.Interfaces.Core.Models;
 using DI.Interfaces.Core.ViewModels;
+using DI.Interfaces.Integrations.Interfaces;
 
 namespace DI.Interfaces.Core.Integrations.Managers
 {
-    public class ShopifyManager : IIntegrationManager<ShopifyAuth, ShopifyProduct>
+    public class ShopifyManager : IShopifyManager
     {
-        public ShopifyProduct CreatePublication(ShopifyAuth auth, Publication publication)
+        public ShopifyProduct Publication_Create(ShopifyAuth auth, Publication publication)
         {
-            ShopifyProduct response = Shopify_RequestThatReturnConcreteProduct(auth, publication);
-
-            return response;
+            throw new NotImplementedException();
         }
 
-        public ShopifyProduct CreatePublicationAndDoSomethingElseForAllSalesChannels(ShopifyAuth auth, Publication publication)
-        {
-            var createdShopifyProduct = CreatePublication(auth, publication);
-            var updatedAmazonProduct = Other_Shopify_MethodThatRequiresCustomProperty(auth, createdShopifyProduct);
-
-            return updatedAmazonProduct;
-        }
         public ShopifyAuth GetAuth(SalesChannel salesChanel)
         {
             return new ShopifyAuth { Token = $"{salesChanel.Id}-{salesChanel.Name}" };
         }
 
-
-        private ShopifyProduct Shopify_RequestThatReturnConcreteProduct(ShopifyAuth auth, Publication publication)
+        public Task<ShopifyProduct> Publication_Get(ShopifyAuth auth, string identifier)
         {
-            return new ShopifyProduct();
+            throw new NotImplementedException();
         }
 
-        private ShopifyProduct Other_Shopify_MethodThatRequiresCustomProperty(ShopifyAuth auth, ShopifyProduct createdShopifyPublication)
-        {
-            createdShopifyPublication.CustomShopifyProperty = "xxxxx";
-            return createdShopifyPublication;
-        }
-
-        public Task<ShopifyProduct> GetPublication(ShopifyAuth auth, string identifier)
+        public Task<IEnumerable<IPublication>> Publication_Get_All(ShopifyAuth auth)
         {
             throw new NotImplementedException();
         }
@@ -47,5 +32,9 @@ namespace DI.Interfaces.Core.Integrations.Managers
         {
             throw new NotImplementedException();
         }
+
+
+
+
     }
 }

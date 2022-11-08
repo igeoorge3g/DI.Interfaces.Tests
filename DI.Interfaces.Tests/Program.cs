@@ -3,6 +3,7 @@ using DI.Interfaces.Core.Interfaces;
 using DI.Interfaces.Core.Manager;
 using DI.Interfaces.Core.Repositories;
 using DI.Interfaces.Infrastructure.Persistence;
+using DI.Interfaces.Integrations.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,17 +13,19 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
 //builder.Services.AddScoped(typeof(IBaseManager<,,>), typeof(BaseManager<,,>)); // <<< For abstract implementations
 builder.Services.AddScoped<ISalesChannelRepository, SalesChannelRepository>();
 builder.Services.AddScoped<IPublicationRepository, PublicationRepository>();
 
-builder.Services.AddScoped<IntegrationManager>();
 builder.Services.AddScoped<IPublicationManager, PublicationManager>();
 builder.Services.AddScoped<ISalesChannelManager, SalesChannelManager>();
 
-builder.Services.AddScoped<AmazonManager>();
-builder.Services.AddScoped<MercadolibreManager>();
-builder.Services.AddScoped<ShopifyManager>();
+builder.Services.AddScoped<IAmazonManager, AmazonManager>();
+builder.Services.AddScoped<IMercadolibreManager, MercadolibreManager>();
+builder.Services.AddScoped<IShopifyManager, ShopifyManager>();
+
 builder.Services.AddScoped<IntegrationManager>();
 
 var app = builder.Build();
